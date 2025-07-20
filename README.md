@@ -1,0 +1,3 @@
+-php artisan serve
+-php artisan db:seed
+-php artisan schedule:run
