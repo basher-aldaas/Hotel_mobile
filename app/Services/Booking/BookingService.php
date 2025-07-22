@@ -20,7 +20,7 @@ class BookingService
         if (!$room) {
             return [
                 'data' => [],
-                'message' => 'Room not found',
+                'message' => 'rooms not found',
                 'code' => 404,
             ];
         }

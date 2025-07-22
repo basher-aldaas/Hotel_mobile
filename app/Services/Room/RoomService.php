@@ -6,48 +6,64 @@ use App\Models\Booking;
 use App\Models\Rating;
 use App\Models\Room;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class RoomService
 {
-    public function create_room($request) : array
+    public function create_room(array $request): array
     {
+        // ✅ تجهيز بيانات الصورة إن وُجدت
+        if (isset($request['image'])) {
+            $image = $request['image'];
+            $imageName = 'room' . now()->format('Ymd_His') . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('room'), $imageName); // حفظ داخل public/room
+            $imagePath = 'room/' . $imageName; // المسار الذي سيُخزن في قاعدة البيانات
+        } else {
+            $imagePath = null;
+        }
 
-                $image = $request['image'];
-                $imageName = now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/rooms', $imageName);
-
-                $room = Room::query()->create([
-                    'title' => $request['title'],
-                    'image' => 'storage/rooms/' . $imageName,
-                    'description' => $request['description'],
-                    'price' => $request['price'],
-                    'wifi' => $request['wifi'],
-                    'room_type' => $request['room_type'],
-                    'status' => $request['status'] ?? null,
-                    'bed_number' => $request['bed_number'],
-                    'valuation' => $request['valuation'] ?? null,
-                ]);
-
+        // ✅ إنشاء الغرفة في قاعدة البيانات
+        $room = Room::create([
+            'title'       => $request['title'],
+            'image'       => $imagePath,
+            'description' => $request['description'] ?? null,
+            'price'       => $request['price'],
+            'wifi'        => $request['wifi'],
+            'room_type'   => $request['room_type'],
+            'status'      => $request['status'] ?? null,
+            'bed_number'  => $request['bed_number'],
+            'valuation'   => $request['valuation'] ?? null,
+        ]);
 
         return [
-            'data' => $room,
-            'message' => 'Room created successfully',
+            'data'    => $room,
+            'message' => 'Room created successfully.',
         ];
-
     }
-
     public function update_room($request, $id): array
     {
         $room = Room::query()->find($id);
 
-        if ($room){
+        if (!$room) {
+            return [
+                'data' => null,
+                'message' => 'This room does not exist',
+                'code' => 404,
+            ];
+        }
+
         // التحقق من وجود صورة جديدة في الطلب
         if (isset($request['image']) && $request['image'] !== null) {
+            // حذف الصورة القديمة إن وجدت
+            if ($room->image && File::exists(public_path($room->image))) {
+                File::delete(public_path($room->image));
+            }
+
             $image = $request['image'];
-            $imageName = now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/rooms', $imageName);
-            $imagePath = 'storage/rooms/' . $imageName;
+            $imageName = 'room' . now()->format('Ymd_His') . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('room'), $imageName);
+            $imagePath = 'room/' . $imageName;
         } else {
             $imagePath = $room->image; // احتفظ بالصورة القديمة
         }
@@ -64,17 +80,12 @@ class RoomService
             'valuation'   => $request['valuation'] ?? $room->valuation,
         ]);
 
-        $message = 'Room updated successfully';
-        $code = 200;
-        }
-
         return [
-            'data' => $room ?? null,
-            'message' => $message ?? 'This room does not exists',
-            'code' => $code ?? 404
+            'data' => $room,
+            'message' => 'Room updated successfully',
+            'code' => 200,
         ];
     }
-
     public function delete_room($id) : array
     {
         $room = Room::find($id);
@@ -128,7 +139,7 @@ class RoomService
         if (!$room){
             return [
                 'data' => [],
-                'message' => 'This Room does not exists',
+                'message' => 'This rooms does not exists',
                 'code' => 404
             ];
         }
@@ -153,7 +164,7 @@ class RoomService
         if (!$room){
             return [
                 'data' => [],
-                'message' => 'This Room does not exists',
+                'message' => 'This rooms does not exists',
                 'code' => 404
             ];
         }

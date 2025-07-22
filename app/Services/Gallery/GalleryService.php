@@ -4,18 +4,19 @@ namespace App\Services\Gallery;
 
 use App\Models\Gallery;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class GalleryService
 {
 
-    public function create_gallery($request) : array
+    public function create_gallery($request): array
     {
         $image = $request['image'];
-        $imageName = now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $image->getClientOriginalExtension();
-        $image->storeAs('public/galleries' , $imageName);
+        $imageName = 'gallery_' . now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path('gallery'), $imageName);
 
         $gallery = Gallery::create([
-            'image' => 'storage/galleries' . $imageName,
+            'image' => 'gallery/' . $imageName,
         ]);
 
         return [
@@ -25,32 +26,41 @@ class GalleryService
         ];
     }
 
-    public function update_gallery($request , $id) : array
+
+    public function update_gallery($request, $id): array
     {
         $gallery = Gallery::query()->find($id);
 
-        if ($gallery){
-            if (isset($request['image']) && $request['image'] !== null) {
-                $image = $request['image'];
-                $imageName = now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $image->getClientOriginalExtension();
-                $image->storeAs('public/galleries', $imageName);
-                $imagePath = 'storage/galleries/' . $imageName;
-            } else {
-                $imagePath = $gallery->image; // احتفظ بالصورة القديمة
-            }
-
-            $gallery->update([
-                'image'       => $imagePath,
-            ]);
-
-            $message = 'Gallery updated successfully';
-            $code = 200;
+        if (!$gallery) {
+            return [
+                'data' => null,
+                'message' => 'Gallery not found',
+                'code' => 404,
+            ];
         }
 
+        if (isset($request['image']) && $request['image'] !== null) {
+            // حذف الصورة القديمة إذا كانت موجودة
+            if ($gallery->image && File::exists(public_path($gallery->image))) {
+                File::delete(public_path($gallery->image));
+            }
+
+            $image = $request['image'];
+            $imageName = 'gallery_' . now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('gallery'), $imageName);
+            $imagePath = 'gallery/' . $imageName;
+        } else {
+            $imagePath = $gallery->image; // الاحتفاظ بالصورة القديمة
+        }
+
+        $gallery->update([
+            'image' => $imagePath,
+        ]);
+
         return [
-            'data' => $gallery ?? null,
-            'message' => $message ?? 'Not found',
-            'code' => $code ?? 404
+            'data' => $gallery,
+            'message' => 'Gallery updated successfully',
+            'code' => 200,
         ];
     }
 

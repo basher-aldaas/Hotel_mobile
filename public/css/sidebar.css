@@ -1,0 +1,32 @@
+.custom-sidebar {
+    width: 280px;
+    min-height: 100vh;
+    background-color: #182649; /* أزرق غامق */
+    color: #9febea; /* سماوي فاتح */
+}
+
+.custom-sidebar .nav-link {
+    font-size: 16px;
+    color: #9febea;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.custom-sidebar .nav-link:hover {
+    background-color: #1d3055;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 2px solid #9febea;
+}
+
+.username {
+    font-size: 18px;
+    color: #9febea;
+}

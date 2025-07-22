@@ -65,7 +65,7 @@ class ResetPasswordAction
         if (!$user) {
             return [
                 'data' => [],
-                'message' => 'User not found',
+                'message' => 'users not found',
                 'code' => 404,
             ];
         }

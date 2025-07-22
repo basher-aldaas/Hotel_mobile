@@ -1,0 +1,13 @@
+.custom-footer {
+    background-color: #182649; /* Dark Blue */
+    color: #9febea; /* Light Cyan */
+    font-size: 14px;
+    border-top: 1px solid rgba(159, 235, 234, 0.2);
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.5px;
+}
+.footer-link {
+    color: #9febea;
+    margin: 0 8px;
+    text-decoration: none;
+}

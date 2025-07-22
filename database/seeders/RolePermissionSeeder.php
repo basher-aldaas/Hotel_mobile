@@ -53,7 +53,7 @@ class RolePermissionSeeder extends Seeder
             'email_verified_at' => now(),
             'phone' => '0994875925',
             'password' =>bcrypt('11111111'),
-            'role' => 0,
+            'role' => 1,
             'wallet' => 0,
             'image' => fake()->text(20),
         ]);

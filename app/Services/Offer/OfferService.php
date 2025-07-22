@@ -15,7 +15,7 @@ class OfferService
        if (!$room){
            return [
                'data' => null,
-               'message' => 'Room not found',
+               'message' => 'rooms not found',
                'code' => 404
            ];
        }

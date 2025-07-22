@@ -27,7 +27,7 @@ class AuthService
 
         $user->load('roles', 'permissions');
 
-       //$user = User::query()->find($user['id']);
+       //$user = users::query()->find($user['id']);
         //$user = $this->appendRolesAndPermissions($user);
         $user['token'] = $user->createToken("token")->plainTextToken;
 
@@ -49,12 +49,12 @@ class AuthService
                     $code = 200;
                 }else{
                     $user = [];
-                    $message = 'User email does not match with password';
+                    $message = 'users email does not match with password';
                     $code = 401;
                 }
         }else{
             $user = [];
-            $message = 'User not found you must to register first';
+            $message = 'users not found you must to register first';
             $code = 404;
         }
         return [

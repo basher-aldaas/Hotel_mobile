@@ -1,0 +1,32 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+.background-image {
+    background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1470&q=80');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    filter: brightness(0.7); /* تخفيف سطوع الصورة */
+}
+.card-transparent {
+    background: rgba(0, 0, 0, 0.5); /* شفاف أسود */
+    color: white;
+    border-radius: 12px;
+}
+label {
+    color: #ddd;
+}
+.form-check-label {
+    color: #ddd;
+}
+.btn-dark {
+    background-color: #333;
+    border: none;
+}
